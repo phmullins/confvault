@@ -1,0 +1,36 @@
+###############################################################################
+## Monit control file
+###############################################################################
+
+set daemon     120                   # Check services at 2-minute intervals
+set logfile    /var/log/monit.log    # Set logging to the systemlog
+set idfile     /var/lib/monit/id     # Set the location of the Monit id file
+set statefile  /var/lib/monit/state  # Set the location of the Monit state file
+set pidfile /var/run/monit.pid       # Set the location of the Monit pid file
+
+set mailserver localhost             # Primary mailserver
+    with timeout 15 seconds          # Mailserver timeout
+
+set alert pmullins11@gmail.com       # Email address for alerts
+set mail-format {
+  from: monit@$HOST
+  subject: monit alert --  $EVENT $SERVICE
+  message: $EVENT Service $SERVICE
+    Date:        $DATE
+    Action:      $ACTION
+    Host:        $HOST
+    Description: $DESCRIPTION
+}
+
+set eventqueue
+    basedir /var/lib/monit/events    # Base directory where events will be stored
+    slots 100                        # Optionally limit the queue size
+
+set httpd port 2812 and              # Enable web service
+    allow pmullins:nostromo1968
+
+###############################################################################
+## Includes
+###############################################################################
+
+include /etc/monit/conf.d/*
